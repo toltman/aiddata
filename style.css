@@ -1,0 +1,28 @@
+#main {
+  width: 500px;
+}
+
+h2 {
+  font-family: sans-serif;
+  margin: 0;
+  padding: 0 10px;
+  text-align: center;
+}
+
+#tooltip {
+  font-family: sans-serif;
+  background: rgba(69, 77, 93, 0.9);
+  border-radius: 0.1rem;
+  color: #fff;
+  display: block;
+  font-size: 12px;
+  padding: 0.2rem 0.4rem;
+  position: absolute;
+  z-index: 300;
+  visibility: hidden;
+}
+
+g.tick text {
+  font-family: sans-serif;
+  font-size: 11px;
+}
