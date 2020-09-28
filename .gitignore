@@ -1,0 +1,5 @@
+.prettierrc
+*.csv
+*.pdf
+.RData
+.Rhistory
