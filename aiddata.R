@@ -68,6 +68,8 @@ f_countries <- countries %>% subset(
   !grepl("unspecified", country, ignore.case = TRUE)
   )
   
+write.csv(f_countries, "country_data.csv")
+
 # plot donator countries
 f_countries %>%
   mutate(donations = donations / 1e9) %>%

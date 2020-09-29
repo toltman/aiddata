@@ -15,7 +15,7 @@ function getBarChartConfig() {
   let width = 500;
   let height = 600;
   let margin = {
-    top: 10,
+    top: 30,
     bottom: 20,
     left: 10,
     right: 10,
@@ -36,7 +36,7 @@ function getBarChartScales(data, config) {
   let min = d3.min(data, (d) => +d.net_donations);
   let y0 = Math.max(Math.abs(min), Math.abs(max));
 
-  let xScale = d3.scaleLinear().range([0, bodyWidth]).domain([y0, -y0]);
+  let xScale = d3.scaleLinear().range([0, bodyWidth]).domain([-y0, y0]);
 
   let yScale = d3
     .scaleBand()
@@ -60,7 +60,7 @@ function drawBars(data, scales, config) {
     .enter()
     .append("rect")
     .attr("height", yScale.bandwidth())
-    .attr("x", (d) => xScale(Math.max(0, d.net_donations)))
+    .attr("x", (d) => xScale(Math.min(0, d.net_donations)))
     .attr("y", (d) => yScale(d.country))
     .attr("width", (d) => Math.abs(xScale(d.net_donations) - xScale(0)))
     .attr("class", "bar")
@@ -91,15 +91,15 @@ function showTooltip(text, coords) {
     .style("visibility", "visible");
 }
 
-function drawAxes(data, { xScale, yScale }, { margin, bodyHeight }) {
+function drawAxes(data, { xScale, yScale }, { margin }) {
   let yAxis = d3.axisRight(yScale);
   let xAxis = d3
-    .axisBottom(xScale)
+    .axisTop(xScale)
     .ticks(5)
     .tickFormat((d) => d3.format("$0.1s")(d).replace(/G/, "B"));
 
   d3.select("#xAxis")
-    .attr("transform", `translate(${margin.left},${bodyHeight + margin.top})`)
+    .attr("transform", `translate(${margin.left},${margin.top})`)
     .call(xAxis);
 
   gYAxis = d3
@@ -110,20 +110,20 @@ function drawAxes(data, { xScale, yScale }, { margin, bodyHeight }) {
   gYAxis.selectAll(".tick").each(function (d, i) {
     d3.select(this).attr(
       "text-anchor",
-      data[i].net_donations > 0 ? "start" : "end"
+      data[i].net_donations < 0 ? "start" : "end"
     );
     d3.select(this)
       .selectAll("line")
       .attr(
         "x2",
-        data[i].net_donations > 0 ? yAxis.tickSize() : -yAxis.tickSize()
+        data[i].net_donations < 0 ? yAxis.tickSize() : -yAxis.tickSize()
       );
 
     d3.select(this)
       .selectAll("text")
       .attr(
         "x",
-        data[i].net_donations > 0
+        data[i].net_donations < 0
           ? 1.5 * yAxis.tickSize()
           : -1.5 * yAxis.tickSize()
       );
