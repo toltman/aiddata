@@ -92,7 +92,7 @@ function showTooltip(text, coords) {
 }
 
 function drawAxes(data, { xScale, yScale }, { margin }) {
-  let yAxis = d3.axisRight(yScale);
+  let yAxis = d3.axisLeft(yScale);
   let xAxis = d3
     .axisTop(xScale)
     .ticks(5)
@@ -107,25 +107,25 @@ function drawAxes(data, { xScale, yScale }, { margin }) {
     .attr("transform", `translate(${xScale(0) + margin.left}, ${margin.top})`)
     .call(yAxis);
 
-  gYAxis.selectAll(".tick").each(function (d, i) {
-    d3.select(this).attr(
-      "text-anchor",
-      data[i].net_donations < 0 ? "start" : "end"
-    );
-    d3.select(this)
-      .selectAll("line")
-      .attr(
-        "x2",
-        data[i].net_donations < 0 ? yAxis.tickSize() : -yAxis.tickSize()
-      );
+  setYAxisOrientation(data, gYAxis, (d) => d.net_donations < 0);
+}
 
-    d3.select(this)
-      .selectAll("text")
+function setYAxisOrientation(data, yAxisGroup, reverseDirection) {
+  let textAnchor = yAxisGroup.attr("text-anchor");
+  let reverseTextAnchor = textAnchor == "start" ? "end" : "start";
+  yAxisGroup.selectAll(".tick").each(function (d, i) {
+    let tick = d3.select(this);
+    let tickSize = tick.select("line").attr("x2");
+    let tickTextX = tick.select("text").attr("x");
+    tick
       .attr(
-        "x",
-        data[i].net_donations < 0
-          ? 1.5 * yAxis.tickSize()
-          : -1.5 * yAxis.tickSize()
-      );
+        "text-anchor",
+        reverseDirection(data[i]) ? reverseTextAnchor : textAnchor
+      )
+      .select("line")
+      .attr("x2", reverseDirection(data[i]) ? -tickSize : tickSize);
+    tick
+      .select("text")
+      .attr("x", reverseDirection(data[i]) ? -tickTextX : tickTextX);
   });
 }
