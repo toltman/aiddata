@@ -1,5 +1,5 @@
 .prettierrc
-*.csv
+AidDataCore*.csv
 *.pdf
 .RData
 .Rhistory
